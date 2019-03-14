@@ -10,8 +10,12 @@
   "author": "Simon Prickett",
   "license": "MIT",
   "dependencies": {
+    "form-data": "^2.3.3",
     "mmm-usonic": "^2.5.3",
+    "node-webcam": "^0.4.6",
     "onoff": "^3.2.1",
-    "pigpio": "^1.2.1"
+    "pigpio": "^1.2.1",
+    "request": "^2.88.0",
+    "restler": "^3.4.0"
   }
 }
