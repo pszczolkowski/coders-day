@@ -1,6 +1,6 @@
 const Gpio = require('pigpio').Gpio;
  
- const interval = 300;
+ const interval = 100;
  const HIGH = 1;
  const triggerHighTime = 10;
  

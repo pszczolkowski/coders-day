@@ -2,13 +2,13 @@
 
 const { initDistanceSensor } = require('./usonic.js');
  
-const epsilon = 10;
+const epsilon = 30;
  
 let officeEnterListener = null;
 let officeExitListener = null;
 let initialDistances = {
-    exit: 0,
-    inside: 0
+    exit: -1,
+    inside: -1
 };
 let distancesHasChanged = {
     exit: false,
@@ -17,8 +17,8 @@ let distancesHasChanged = {
 
 // exit sensor
 initDistanceSensor({
-	    echoPin: 19,
-	    triggerPin: 6,
+	    echoPin: 11,
+	    triggerPin: 0,
 	    callback: handleExitSensorDistance
 	});
 
@@ -26,12 +26,17 @@ initDistanceSensor({
 initDistanceSensor({
 	    echoPin: 19,
 	    triggerPin: 6,
-	    callback: handleExitSensorDistance
+	    callback: handleInsideSensorDistance
 	});
 
 
 function handleExitSensorDistance(distance) {
-    console.log('exit', distance);
+    if (initialDistances.exit < 0) {
+        initialDistances.exit = distance;
+        return;
+    }
+
+    //console.log('exit', distance);
     if (Math.abs(distance - initialDistances.exit) > epsilon) {
         if (distancesHasChanged.inside) {
             distancesHasChanged = {
@@ -40,13 +45,19 @@ function handleExitSensorDistance(distance) {
             };
             officeExitListener();
         } else {
+            //console.log('EXIT SENSOR');
             distancesHasChanged.exit = true;
         }
     }
 }
  
 function handleInsideSensorDistance(distance) {
-    console.log('inside', distance);
+    if (initialDistances.inside < 0) {
+        initialDistances.inside = distance;
+        return;
+    }
+
+    //console.log('inside', distance);
     if (Math.abs(distance - initialDistances.inside) > epsilon) {
         if (distancesHasChanged.exit) {
             distancesHasChanged = {
@@ -55,6 +66,7 @@ function handleInsideSensorDistance(distance) {
             };
             officeEnterListener();
         } else {
+            //console.log('INDISE SENSOR');
             distancesHasChanged.inside = true;
         }
     }
@@ -80,5 +92,6 @@ function addExitOfficeListener(listener) {
 }
  
 module.exports = {
-    addEnterOfficeListener
+    addEnterOfficeListener,
+    addExitOfficeListener
 };
