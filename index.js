@@ -8,9 +8,9 @@ addExitOfficeListener(() => {
 	console.log('OMG SOMEONE IS LEAVING US');
 });
 
-/*const { takePhoto } = require('./camera.js');
+const { takePhoto } = require('./camera.js');
 
-takePhoto().then(photoPath => {
+/*takePhoto().then(photoPath => {
    sendPhoto(photo); 
 });*/
 /*const fs = require('fs');

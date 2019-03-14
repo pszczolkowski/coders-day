@@ -8,7 +8,7 @@ let officeEnterListener = () => console.log('no office enter listener');
 let officeExitListener = () => console.log('no office exit listener');
 let initialDistances = {
     exit: -1,
-    inside: -1
+    inside: -1,
 };
 let someoneInRange = {
     exit: false,
@@ -90,7 +90,7 @@ function updateExitEndState() {
 }
 
 // exit sensor
-/*initDistanceSensor({
+initDistanceSensor({
 	    echoPin: 11,
 	    triggerPin: 0,
 	    callback: handleExitSensorDistance
@@ -101,7 +101,7 @@ initDistanceSensor({
 	    echoPin: 19,
 	    triggerPin: 6,
 	    callback: handleInsideSensorDistance
-	});*/
+	});
 
 function setSomeoneInRange(sensorName, isSomeoneInRange) {
     someoneInRange[sensorName] = isSomeoneInRange;
@@ -113,8 +113,10 @@ function updateState() {
 
 function handleExitSensorDistance(distance) {
     if (initialDistances.exit < 0) {
+        initialDistances.exit++;
+    } else if (initialDistances.exit == 0) {
+            console.log('initialDistances.exit', distance);
         initialDistances.exit = distance;
-        return;
     }
 
     lastDistances.exit = distance;
@@ -126,30 +128,36 @@ function handleExitSensorDistance(distance) {
     }
     
     //console.log('exit', distance);
+        //console.log('exit state', someoneInRange.exit);
     updateState();
 }
  
 function handleInsideSensorDistance(distance) {
     if (initialDistances.inside < 0) {
+        initialDistances.inside++;
+    } else if (initialDistances.inside == 0) {
+        console.log('initialDistances.inside', distance);
         initialDistances.inside = distance;
-        return;
     }
 
     lastDistances.inside = distance;
 
-    //console.log('exit', distance);
     if (isSomeoneInRange('inside')) {
         setSomeoneInRange('inside', true);
     } else {
         setSomeoneInRange('inside', false);
     }
+    //console.log('inside state', someoneInRange.inside);
     //console.log('inside', distance);
     updateState();
 }
  
 function isSomeoneInRange(sensorName) {
     const distance = lastDistances[sensorName];
-    return Math.abs(distance - initialDistances[sensorName]) > epsilon;
+    const initialDistance = Math.max(initialDistances.inside, initialDistances.exit);
+    //console.log('initialDistance', initialDistance);
+    //console.log('distance', distance);
+    return Math.abs(distance - initialDistance) > epsilon;
 }
  
 /*	initialDistances = {
