@@ -33,6 +33,9 @@ var opts = {
  
 };
  
+function randomString() {
+    return Math.random().toString(36).substring(7);
+}
  
 //Creates webcam instance
  
@@ -43,11 +46,12 @@ var Webcam = NodeWebcam.create(opts);
 
 function takePhoto() {
     return new Promise((resolve, reject) => {
-        Webcam.capture( "test_picture", function( err, data ) {
+        const fileName = randomString();
+        Webcam.capture(fileName, function( err, fileNameResult ) {
             if (err) {
                     reject(err);
             } else {
-                resolve(data);
+                resolve(fileNameResult);
             }
         } );
     }); 
