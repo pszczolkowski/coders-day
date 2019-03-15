@@ -39,21 +39,26 @@ function randomString() {
  
 //Creates webcam instance
  
-var Webcam = NodeWebcam.create(opts);
+
  
- 
+ var Webcam = NodeWebcam.create(opts);
 //Will automatically append location output type
 
 function takePhoto() {
     return new Promise((resolve, reject) => {
-        const fileName = randomString();
-        Webcam.capture(fileName, function( err, fileNameResult ) {
-            if (err) {
-                    reject(err);
-            } else {
-                resolve(fileNameResult);
-            }
-        } );
+        Webcam.list(list => {
+            opts.device = list[0];
+            Webcam = NodeWebcam.create(opts);
+            const fileName = randomString();
+            Webcam.capture(fileName, function( err, fileNameResult ) {
+                if (err) {
+                        reject(err);
+                } else {
+                    resolve(fileNameResult);
+                }
+            } );
+
+        });
     }); 
 }
 
