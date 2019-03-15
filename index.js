@@ -4,6 +4,9 @@ const fs = require('fs');
 const request = require('request');
 const FormData = require('form-data');
 
+let backendUrl = '';
+
+fetchBackendUrlFromS3();
 addEnterOfficeListener(onOfficeEnter);
 addExitOfficeListener(onOfficeExit);
 
@@ -34,6 +37,17 @@ function sendPhoto(photoPath, eventType) {
             console.log(err);
         } else {
             console.log('photo has been uploaded');
+        }
+    });
+}
+
+function fetchBackendUrlFromS3() {
+    request({
+        url: 'https://s3.amazonaws.com/ilv2-staging-env/ngrok-url.json',
+        json: true
+    }, (error, response, body) => {
+        if (!error && response.statusCode === 200) {
+            backendUrl = body.url;
         }
     });
 }
