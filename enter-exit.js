@@ -10,8 +10,8 @@ const epsilon = 50;
 let officeEnterListener = () => console.log('no office enter listener');
 let officeExitListener = () => console.log('no office exit listener');
 let initialDistances = {
-    exit: -10,
-    inside: -10,
+    exit: -1,
+    inside: -1,
 };
 let someoneInRange = {
     exit: false,
@@ -97,14 +97,14 @@ function updateExitEndState() {
 initDistanceSensor({
 	    echoPin: 11,
 	    triggerPin: 0,
-	    callback: handleExitSensorDistance
+	    callback: onExitSensorRead
 	});
 
 // inside sensor
 initDistanceSensor({
 	    echoPin: 19,
 	    triggerPin: 6,
-	    callback: handleInsideSensorDistance
+	    callback: onInsideSensorRead
 	});
 
 function setSomeoneInRange(sensorName, isSomeoneInRange) {
@@ -121,47 +121,28 @@ function updateState() {
     }
 }
 
-function handleExitSensorDistance(distance) {
-    if (initialDistancesMeasures.exit.length < 10) {
-        initialDistancesMeasures.exit.push(distance);
-        return;
-    } else if (initialDistances.exit < 0) {
-        initialDistances.exit = average(initialDistancesMeasures.exit);
-        console.log('exit initial distance set to', initialDistances.exit);
-        return;
-    }
-    
-    lastDistances.exit = distance;
-
-    if (isSomeoneInRange('exit')) {
-        setSomeoneInRange('exit', true);
-    } else {
-        setSomeoneInRange('exit', false);
-    }
-    
-    //console.log('exit', distance);
-    updateState();
+function onExitSensorRead(distance) {
+    onSensorRead(distance, 'exit');
 }
  
-function handleInsideSensorDistance(distance) {
-    if (initialDistancesMeasures.inside.length < 10) {
-        initialDistancesMeasures.inside.push(distance);
-        return;
-    } else if (initialDistances.inside < 0) {
-        initialDistances.inside = average(initialDistancesMeasures.inside);
-        console.log('inside initial distance set to', initialDistances.inside);
+function onInsideSensorRead(distance) {
+    onSensorRead(distance, 'inside');
+}
+
+function onSensorRead(distance, sensorName) {
+    if (initialDistances[sensorName] < 0) {
+        initialDistances[sensorName] = distance;
+        console.log(sensorName + ' initial distance set to', distance);
         return;
     }
 
-    lastDistances.inside = distance;
+    lastDistances[sensorName] = distance;
 
-    if (isSomeoneInRange('inside')) {
-        setSomeoneInRange('inside', true);
+    if (isSomeoneInRange(sensorName)) {
+        setSomeoneInRange(sensorName, true);
     } else {
-        setSomeoneInRange('inside', false);
+        setSomeoneInRange(sensorName, false);
     }
-    //console.log('inside state', someoneInRange.inside);
-    //console.log('inside', distance);
     updateState();
 }
  
@@ -169,9 +150,6 @@ function isSomeoneInRange(sensorName) {
     const distance = lastDistances[sensorName];
     return Math.abs(distance - initialDistances[sensorName]) > epsilon;
 }
-
- const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
-
  
 function addEnterOfficeListener(listener) {
     officeEnterListener = listener;
