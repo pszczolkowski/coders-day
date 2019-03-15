@@ -1,8 +1,11 @@
 const Gpio = require('pigpio').Gpio;
  
- const interval = 100;
+ const interval = 50;
  const HIGH = 1;
  const triggerHighTime = 10;
+ 
+ let lastTriggeredSensorIndex = 0;
+ const sensors = [];
  
 // The number of microseconds it takes sound to travel 1cm at 20 degrees celcius
 const MICROSECDONDS_PER_CM = 1e6/34321;
@@ -25,11 +28,17 @@ function initDistanceSensor(config) {
     }
   });
   
-  // Trigger a distance measurement once per second
+  sensors.push(trigger);
+}
+
+// Trigger a distance measurement once per second
     setInterval(() => {
+        lastTriggeredSensorIndex = (lastTriggeredSensorIndex + 1) % sensors.length;
+    
+        const trigger = sensors[lastTriggeredSensorIndex];
+    
       trigger.trigger(triggerHighTime, HIGH); // Set trigger high for 10 microseconds
     }, interval);
-}
 
 module.exports = {
     initDistanceSensor
