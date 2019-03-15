@@ -1,5 +1,5 @@
 {
-  "name": "pitrafficlights",
+  "name": "codersday2019",
   "version": "0.0.1",
   "description": "Demo with Low Voltage Labs Traffic Lights",
   "main": "index.js",
@@ -14,8 +14,6 @@
     "mmm-usonic": "^2.5.3",
     "node-webcam": "^0.4.6",
     "onoff": "^3.2.1",
-    "pigpio": "^1.2.1",
-    "request": "^2.88.0",
-    "restler": "^3.4.0"
+    "pigpio": "^1.2.1"
   }
 }

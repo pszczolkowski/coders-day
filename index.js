@@ -1,36 +1,39 @@
 const { addEnterOfficeListener, addExitOfficeListener } = require('./enter-exit.js');
-
-addEnterOfficeListener(() => {
-	console.log('WE HAVE AN ENTER MOTHERFUCKER');
-});
-
-addExitOfficeListener(() => {
-	console.log('OMG SOMEONE IS LEAVING US');
-});
-
 const { takePhoto } = require('./camera.js');
-
-/*takePhoto().then(photoPath => {
-   sendPhoto(photo); 
-});*/
-/*const fs = require('fs');
+const fs = require('fs');
 const request = require('request');
-var FormData = require('form-data');
-sendPhoto(__dirname + '/test_picture.jpg');
+const FormData = require('form-data');
 
-function sendPhoto(photoPath) {
+addEnterOfficeListener(onOfficeEnter);
+addExitOfficeListener(onOfficeExit);
+
+function onOfficeEnter() {
+    console.log('ENTER TO OFFICE');
+	
+	takePhoto().then(photoPath => {
+    	console.log('photo taken');
+        sendPhoto(photoPath, 'ENTER');
+    });
+}
+
+function onOfficeExit() {
+    console.log('LEAVE FROM OFFICE');
+	
+	takePhoto().then(photoPath => {
+    	console.log('photo taken');
+        sendPhoto(photoPath, 'ENTER');
+    });
+}
+
+function sendPhoto(photoPath, eventType) {
     var form = new FormData();
     form.append('file', fs.createReadStream(photoPath));
-    form.submit("http://3e96b120.ngrok.io/confluence/rest/usersresource/1.0/users/photo", (err, resp) => {
-        console.log(err, resp);
-    });*/
-    
-    //var req = request.post("http://3e96b120.ngrok.io/confluence/rest/usersresource/1.0/users/photo", function (err, resp, body) {
-      
-/*       request.post({url:"http://3e96b120.ngrok.io/confluence/rest/usersresource/1.0/users/photo", formData: form}, function optionalCallback(err, httpResponse, body) {
-          if (err) {
-            return console.error('upload failed:', err);
-          }
-          console.log('Upload successful!  Server responded with:', body);
-        }); */
-//}
+    form.append('event', eventType);
+    form.submit('http://84e7eff1.eu.ngrok.io/event-photo', (err, resp) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('photo has been uploaded');
+        }
+    });
+}
